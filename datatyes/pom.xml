@@ -10,19 +10,15 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-
-    <artifactId>discuss-service</artifactId>
+    <artifactId>datatypes</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.discuss</groupId>
-            <artifactId>discuss-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
-
-
     </dependencies>
 
 </project>

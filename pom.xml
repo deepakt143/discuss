@@ -12,6 +12,7 @@
     <modules>
         <module>discuss-service</module>
         <module>discuss-core</module>
+        <module>datatyes</module>
     </modules>
     <properties>
         <spring-mvc.version>4.0.5.RELEASE</spring-mvc.version>
