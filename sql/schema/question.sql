@@ -1,8 +1,9 @@
 CREATE TABLE question (
     question_id INT NOT NULL,
-    likes INT DEFAULT(0),
+    upvotes INT DEFAULT(0),
     views INT DEFAULT(0),
-    rating INT DEFAULT(0),
+    difficulty INT DEFAULT(0),
+    timestamp TIMESTAMP NOT NULL,
     text VARCHAR,
     image_id VARCHAR,
     CONSTRAINT question_pk PRIMARY KEY (question_id)
