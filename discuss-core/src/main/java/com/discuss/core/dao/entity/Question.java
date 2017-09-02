@@ -37,7 +37,7 @@ public class Question {
     @Column(name = "image_id")
     private String imageId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", foreignKey = @ForeignKey(name = "PERSON_ID_FK"))
     private User user;
 }

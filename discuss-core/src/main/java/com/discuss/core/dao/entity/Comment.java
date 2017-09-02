@@ -37,11 +37,11 @@ public class Comment {
     @Column(name = "image_id")
     private int imageId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "comment_question_id_fk"))
     private Question question;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "comment_user_id_fk"))
     private User ownerUser;
 }

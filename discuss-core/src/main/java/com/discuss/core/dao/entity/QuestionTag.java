@@ -15,11 +15,11 @@ import javax.persistence.*;
 @Table(name = "question_tag")
 public class QuestionTag {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "question_tag_question_id_fk"))
-    private int question_id;
+    private Question question;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", foreignKey = @ForeignKey(name = "question_tag_tag_id_fk"))
-    private int tag_id;
+    private Tag tag;
 }

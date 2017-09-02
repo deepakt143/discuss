@@ -16,11 +16,11 @@ import javax.persistence.*;
 @Table(name = "user_question_posts")
 public class UserQuestionPosts {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "user_question_posts_user_id_fk"))
     private User user;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", foreignKey = @ForeignKey(name = "user_question_posts_question_id_fk"))
     private Question question;
 }
