@@ -6,11 +6,12 @@ import com.discuss.core.dao.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,12 +28,13 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Question> getQuestions(String category, int offset, int limit, String userId) {
+    public List<Question> getQuestions(int categoryId, int offset, int limit, String userId) {
         Criteria criteria = this.sessionFactory.
             getCurrentSession().
             createCriteria(QuestionTag.class).
             createAlias("tag", "tg").
-            add(Restrictions.eq("tg.tagId", category)).
+            createAlias("question", "ques").
+            add(Restrictions.eq("tg.tagId", categoryId)).
             setProjection(Projections.projectionList().add(Property.forName("question"))).
             setFirstResult(offset).
             setMaxResults(limit);
@@ -48,10 +50,11 @@ public class DiscussDaoImpl implements DiscussDao {
             getCurrentSession().
             createCriteria(Comment.class).
             createAlias("question", "qs").
+            createCriteria("user", "usr").
             add(Restrictions.eq("qs.questionId", questionId)).
             setFirstResult(offset).
             setMaxResults(limit);
-        @SuppressWarnings("unchecked")
+       @SuppressWarnings("unchecked")
         List<Comment> comments = criteria.list();
         return comments;
     }
@@ -63,6 +66,7 @@ public class DiscussDaoImpl implements DiscussDao {
             getCurrentSession().
             createCriteria(UserQuestionBookmarks.class).
             createAlias("user", "usr").
+            createAlias("question", "qs").
             add(Restrictions.eq("usr.userId", userId)).
             setProjection(Projections.projectionList().add(Property.forName("question"))).
             setFirstResult(offset).
@@ -78,7 +82,8 @@ public class DiscussDaoImpl implements DiscussDao {
         Criteria criteria = this.sessionFactory.
             getCurrentSession().
             createCriteria(Comment.class).
-            createAlias("ownerUser", "usr").
+            createAlias("question", "ques").
+            createAlias("user", "usr").
             add(Restrictions.eq("usr.userId", userId)).
             setFirstResult(offset).
             setMaxResults(limit);
@@ -102,97 +107,66 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean upvoteQuestion(String questionId, String userId) {
-        Criteria criteria = this.sessionFactory.
-            getCurrentSession().
-            createCriteria(UserQuestionLikes.class).
-            createAlias("user", "usr").
-            createAlias("question", "ques").
-            add(Restrictions.eq("usr.userId", userId)).
-            add(Restrictions.eq("ques.questionId", questionId));
+    public boolean likeQuestion(String questionId, String userId) {
 
-        @SuppressWarnings("unchecked")
-        List<UserQuestionLikes> questions = criteria.list();
-        if(CollectionUtils.isNotEmpty(questions))
+        SQLQuery query1 = this.sessionFactory.getCurrentSession().createSQLQuery("SELECT COUNT(*) as presence FROM user_question_likes WHERE user_id = (:user_id) AND question_id = :question_id");
+        query1.setParameter("user_id", userId);
+        query1.setParameter("question_id", questionId);
+        query1.addEntity("presence", Integer.class);
+
+        @SuppressWarnings(value = "unchecked")
+        List<Integer> list = query1.list();
+
+        if(CollectionUtils.isNotEmpty(list) && list.get(0)  > 0)
             return false;
-        User user = getUser(userId);
-        Question question = getQuestion(questionId, null);
-        UserQuestionLikes userQuestionLikes = new UserQuestionLikes();
-        userQuestionLikes.setQuestion(question);
-        userQuestionLikes.setUser(user);
-        this.sessionFactory.getCurrentSession().saveOrUpdate(userQuestionLikes);
+
+        SQLQuery query = this.sessionFactory.getCurrentSession().createSQLQuery("INSERT INTO user_question_likes (user_id, question_id) VALUES (:user_id, :question_id)");
+        query.setParameter("user_id", userId);
+        query.setParameter("question_id", questionId);
+        query.executeUpdate();
         return true;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean upvoteComment(String commentId, String userId) {
-        Criteria criteria = this.sessionFactory.
-            getCurrentSession().
-            createCriteria(UserCommentLikes.class).
-            createAlias("user", "usr").
-            createAlias("comment", "comment").
-            add(Restrictions.eq("usr.userId", userId)).
-            add(Restrictions.eq("comment.commentId", commentId));
+    public boolean likeComment(String commentId, String userId) {
+        SQLQuery query1 = this.sessionFactory.getCurrentSession().createSQLQuery("SELECT COUNT(*) as presence FROM user_comment_likes WHERE user_id = (:user_id) AND comment_id = :comment_id");
+        query1.setParameter("user_id", userId);
+        query1.setParameter("comment_id", commentId);
+        query1.addEntity("presence", Integer.class);
 
-        @SuppressWarnings("unchecked")
-        List<UserCommentLikes> questions = criteria.list();
-        if(CollectionUtils.isNotEmpty(questions))
+        @SuppressWarnings(value = "unchecked")
+        List<Integer> list = query1.list();
+
+        if(CollectionUtils.isNotEmpty(list) && list.get(0) > 0)
             return false;
-        User user = getUser(userId);
-        Comment comment = getComment(commentId);
-        UserCommentLikes userCommentLikes = new UserCommentLikes();
-        userCommentLikes.setComment(comment);
-        userCommentLikes.setUser(user);
-        this.sessionFactory.getCurrentSession().saveOrUpdate(userCommentLikes);
+
+
+        SQLQuery query = this.sessionFactory.getCurrentSession().createSQLQuery("INSERT INTO user_comment_likes (user_id, comment_id) VALUES (:user_id, :comment_id)");
+        query.setParameter("user_id", userId);
+        query.setParameter("comment_id", commentId);
+        query.executeUpdate();
         return true;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public boolean bookmarkQuestion(String questionId, String userId) {
-        Criteria criteria = this.sessionFactory.
-            getCurrentSession().
-            createCriteria(UserQuestionBookmarks.class).
-            createAlias("user", "usr").
-            createAlias("question", "ques").
-            add(Restrictions.eq("usr.userId", userId)).
-            add(Restrictions.eq("ques.questionId", questionId));
+        SQLQuery query1 = this.sessionFactory.getCurrentSession().createSQLQuery("SELECT COUNT(*) as presence FROM user_question_bookmarks WHERE user_id = (:user_id) AND question_id = :question_id");
+        query1.setParameter("user_id", userId);
+        query1.setParameter("question_id", questionId);
+        query1.addEntity("presence", Integer.class);
 
-        @SuppressWarnings("unchecked")
-        List<UserQuestionBookmarks> questions = criteria.list();
-        if(CollectionUtils.isNotEmpty(questions))
+        @SuppressWarnings(value = "unchecked")
+        List<Integer> list = query1.list();
+
+        if(CollectionUtils.isNotEmpty(list) && list.get(0) > 0)
             return false;
-        User user = getUser(userId);
-        Question question = getQuestion(questionId, null);
-        UserQuestionBookmarks userQuestionBookmarks = new UserQuestionBookmarks();
-        userQuestionBookmarks.setQuestion(question);
-        userQuestionBookmarks.setUser(user);
-        this.sessionFactory.getCurrentSession().saveOrUpdate(userQuestionBookmarks);
+
+        SQLQuery query = this.sessionFactory.getCurrentSession().createSQLQuery("INSERT INTO user_question_bookmarks (user_id, question_id) VALUES (:user_id, :question_id)");
+        query.setParameter("user_id", userId);
+        query.setParameter("question_id", questionId);
+        query.executeUpdate();
         return true;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User getUser(String userId) {
-        Criteria criteria = this.sessionFactory.
-            getCurrentSession().
-            createCriteria(User.class).
-            add(Restrictions.eq("userId", userId));
-
-        @SuppressWarnings("unchecked")
-        User user = (User) criteria.uniqueResult();
-        return user;
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Comment getComment(String commentId) {
-        Criteria criteria = this.sessionFactory.
-            getCurrentSession().
-            createCriteria(Comment.class).
-            add(Restrictions.eq("commentId", commentId));
-
-        @SuppressWarnings("unchecked")
-        Comment comment = (Comment) criteria.uniqueResult();
-        return comment;
     }
 }

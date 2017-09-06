@@ -10,7 +10,7 @@ import java.security.Timestamp;
  * @author Deepak Thakur
  *
  */
-@Data
+
 @Entity
 @Table(name = "comment")
 public class Comment {
@@ -43,5 +43,5 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "comment_user_id_fk"))
-    private User ownerUser;
+    private User user;
 }

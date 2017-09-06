@@ -13,7 +13,7 @@
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <context:component-scan base-package="core.discuss.service">
+    <context:component-scan base-package="com.discuss.core">
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
     </context:component-scan>
 
@@ -24,5 +24,53 @@
                 <value>classpath:/placeholder.conf</value>
             </list>
         </property>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:7634/discuss_db" />
+        <property name="username" value="${USER}" />
+        <property name="password" value="${PSWD}" />
+        <property name="maxActive" value="4" />
+        <property name="maxIdle" value="4" />
+        <property name="minIdle" value="4" />
+        <property name="maxWait" value="4" />
+        <property name="testOnBorrow" value="true" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="60" />
+        <property name="timeBetweenEvictionRunsMillis" value="900000" />
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.discuss.core.dao.entity.Comment</value>
+                <value>com.discuss.core.dao.entity.Question</value>
+                <value>com.discuss.core.dao.entity.QuestionTag</value>
+                <value>com.discuss.core.dao.entity.Tag</value>
+                <value>com.discuss.core.dao.entity.User</value>
+                <value>com.discuss.core.dao.entity.UserCommentLikes</value>
+                <value>com.discuss.core.dao.entity.UserQuestionBookmarks</value>
+                <value>com.discuss.core.dao.entity.UserQuestionLikes</value>
+                <value>com.discuss.core.dao.entity.UserQuestionPosts</value>
+                <value>com.discuss.core.dao.entity.UserTagInterests</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
     </bean>
 </beans>

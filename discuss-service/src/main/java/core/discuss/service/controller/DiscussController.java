@@ -14,7 +14,7 @@ import java.util.List;
 public interface DiscussController {
 
     @RequestMapping(method = RequestMethod.GET, value = {"/questions/list"})
-    List<Question> getQuestions(@RequestParam(value = "category", required = true) final String category,
+    List<Question> getQuestions(@RequestParam(value = "category", required = true) final int category,
                                 @RequestParam(value = "offset", required = true) final int offset,
                                 @RequestParam(value = "limit", required = true) final int limit,
                                 @RequestHeader(value = "userId", required = true) final String userId);
@@ -40,20 +40,12 @@ public interface DiscussController {
                          @RequestHeader(value = "userId", required = true) final String userId);
 
     @RequestMapping(method = RequestMethod.PUT, value = {"/question/upvote"})
-    boolean upvoteQuestion(@RequestParam(value = "questionId", required = true) final String questionId,
+    boolean likeQuestion(@RequestParam(value = "questionId", required = true) final String questionId,
                            @RequestHeader(value = "userId", required = true) final String userId);
 
-    @RequestMapping(method = RequestMethod.PUT, value = {"/question/downvote"})
-    boolean downvoteQuestion(@RequestParam(value = "questionId", required = true) final String questionId,
-                             @RequestHeader(value = "userId", required = true) final String userId);
-
     @RequestMapping(method = RequestMethod.PUT, value = {"/comment/upvote"})
-    boolean upvoteComment(@RequestParam(value = "questionId", required = true) final String questionId,
+    boolean likeComment(@RequestParam(value = "questionId", required = true) final String questionId,
                           @RequestHeader(value = "userId", required = true) final String userId);
-
-    @RequestMapping(method = RequestMethod.PUT, value = {"/comment/downvote"})
-    boolean downvoteComment(@RequestParam(value = "commentId", required = true) final String commentId,
-                            @RequestHeader(value = "userId", required = true) final String userId);
 
     @RequestMapping(method = RequestMethod.PUT, value = {"/bookmark/question"})
     boolean bookmarkQuestion(@RequestParam(value = "questionId", required = true) final String questionId,
