@@ -18,6 +18,27 @@ public class Question {
     private int userId;                        /*   posted by whom    */
     private String userName;                      /*   posted by whom    */
 
+    public int getQuestionId() {
+        return questionId;
+    }
+    public String getText() {
+        return text;
+    }
+    public int getImageId() {
+        return imageId;
+    }
+    public int getLikes() {
+        return likes;
+    }
+    public int getViews() {
+        return views;
+    }
+    public int getUserId() {
+        return userId;
+    }
+    public String getUserName() {
+        return userName;
+    }
     private Question(QuestionBuilder questionBuilder) {
         this.questionId = questionBuilder.questionId;
         this.text = questionBuilder.text;

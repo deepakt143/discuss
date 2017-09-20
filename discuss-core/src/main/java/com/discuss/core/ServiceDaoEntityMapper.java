@@ -10,14 +10,14 @@ import java.util.function.Function;
  */
 public class ServiceDaoEntityMapper {
 
-    public static Function<Comment, com.discuss.datatypes.Comment> commentMapper = comment -> new com.discuss.datatypes.Comment.CommentBuilder().setCommentId(1).build();
-        /*setCommentId(comment.getCommentId()).
+    public static Function<Comment, com.discuss.datatypes.Comment> commentMapper = comment -> new com.discuss.datatypes.Comment.CommentBuilder().
+        setCommentId(comment.getCommentId()).
         setText(comment.getText()).
         setImageIds(comment.getImageId()).
         setLikes(comment.getLikes()).
         setViews(comment.getViews()).
         setUserId(comment.getUser().getUserId()).
-        setUserName(comment.getUser().getName()).build();*/
+        setUserName(comment.getUser().getName()).build();
     public static Function<Question, com.discuss.datatypes.Question> questionMapper = question -> new com.discuss.datatypes.Question.QuestionBuilder().
         setQuestionId(question.getQuestionId()).
         setText(question.getText()).
