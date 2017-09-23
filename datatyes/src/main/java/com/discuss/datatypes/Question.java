@@ -4,11 +4,12 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 
-public class Question {
+public class Question implements Serializable {
     private int questionId;
     private String text;
     private int imageId;

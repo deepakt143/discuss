@@ -3,10 +3,11 @@ package com.discuss.datatypes;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Set;
 
 
-public class Comment {
+public class Comment implements Serializable{
     private int commentId;
     private String text;
     private int imageId;
@@ -14,6 +15,28 @@ public class Comment {
     private int views;
     private int userId;                        /*   posted by whom    */
     private String userName;                      /*   posted by whom    */
+
+    public int getCommentId() {
+        return commentId;
+    }
+    public String getText() {
+        return text;
+    }
+    public int getImageId() {
+        return imageId;
+    }
+    public int getLikes() {
+        return likes;
+    }
+    public int getViews() {
+        return views;
+    }
+    public int getUserId() {
+        return userId;
+    }
+    public String getUserName() {
+        return userName;
+    }
 
     private Comment(CommentBuilder commentBuilder) {
         this.commentId = commentBuilder.commentId;
