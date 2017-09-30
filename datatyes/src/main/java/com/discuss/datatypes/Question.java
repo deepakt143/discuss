@@ -18,6 +18,7 @@ public class Question implements Serializable {
     private int views;
     private int userId;                        /*   posted by whom    */
     private String userName;                      /*   posted by whom    */
+    private String difficulty;
 
     public int getQuestionId() {
         return questionId;
@@ -39,6 +40,9 @@ public class Question implements Serializable {
     }
     public String getUserName() {
         return userName;
+    }
+    public String getDifficulty() {
+        return difficulty;
     }
     private Question(QuestionBuilder questionBuilder) {
         this.questionId = questionBuilder.questionId;
