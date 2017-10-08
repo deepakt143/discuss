@@ -19,6 +19,7 @@ public class Question implements Serializable {
     private int userId;                        /*   posted by whom    */
     private String userName;                      /*   posted by whom    */
     private String difficulty;
+    private boolean liked;
 
     public int getQuestionId() {
         return questionId;
@@ -44,6 +45,12 @@ public class Question implements Serializable {
     public String getDifficulty() {
         return difficulty;
     }
+    public boolean isLiked() {
+        return liked;
+    }
+    public void setLiked(final boolean liked) {
+        this.liked = liked;
+    }
     private Question(QuestionBuilder questionBuilder) {
         this.questionId = questionBuilder.questionId;
         this.text = questionBuilder.text;
@@ -63,6 +70,8 @@ public class Question implements Serializable {
         private int views;
         private int userId;                        /*   posted by whom    */
         private String userName;                      /*   posted by whom    */
+        private String difficulty;
+        private boolean liked;
 
         public QuestionBuilder() {
         }
@@ -97,6 +106,14 @@ public class Question implements Serializable {
         }
         public QuestionBuilder setUserName(final String userName) {
             this.userName = userName;
+            return this;
+        }
+        public QuestionBuilder setDifficulty(final String difficulty) {
+            this.difficulty = difficulty;
+            return this;
+        }
+        public QuestionBuilder setLiked(final boolean liked) {
+            this.liked = liked;
             return this;
         }
         public Question build() {
