@@ -73,6 +73,11 @@ public class DiscussControllerImpl implements DiscussController {
     }
 
     @Override
+    public List<Category> getCategoryList() {
+        return discussService.getCategoryList();
+    }
+
+    @Override
     public List<Category> getQuestionCategoriesForPerson(int personId) {
         return discussService.getQuestionCategoriesForPerson(personId);
     }

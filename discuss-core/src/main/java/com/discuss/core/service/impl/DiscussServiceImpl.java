@@ -27,6 +27,7 @@ public class DiscussServiceImpl implements DiscussService {
     private final DiscussDao discussDao;
     private static final List<Question> EMPTY_QUESTION_LIST = Lists.newArrayList();
     private static final List<Comment> EMPTY_COMMENT_LIST = Lists.newArrayList();
+    private static final List<Category> EMPTY_CATEGORY_LIST = Lists.newArrayList();
 
     @Autowired
     public DiscussServiceImpl(DiscussDao discussDao) {
@@ -167,6 +168,13 @@ public class DiscussServiceImpl implements DiscussService {
                 return null;
             }
         }).collect(Collectors.toList());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public List<Category> getCategoryList() {
+        List<Tag> tags = discussDao.getCategoryList();
+        return CollectionUtils.isEmpty(tags) ? EMPTY_CATEGORY_LIST : tags.stream().map(ServiceDaoEntityMapper.categoryMapper).collect(Collectors.toList());
     }
 
 

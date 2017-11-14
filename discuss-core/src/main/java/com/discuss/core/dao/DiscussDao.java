@@ -5,6 +5,7 @@ package com.discuss.core.dao;
 import com.discuss.core.dao.entity.Comment;
 import com.discuss.core.dao.entity.Question;
 import com.discuss.core.dao.entity.Tag;
+import com.discuss.datatypes.Category;
 
 import java.util.List;
 
@@ -36,4 +37,7 @@ public interface DiscussDao {
     boolean isCommentLikedByPerson(int commentId, int personId);
 
     Comment getPersonAddedCommentOnQuestion(int questionId, int personId);
+
+    List<Tag> getCategoryList();
+
 }

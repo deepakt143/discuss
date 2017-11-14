@@ -3,6 +3,7 @@ package com.discuss.core.dao.impl;
 
 import com.discuss.core.dao.DiscussDao;
 import com.discuss.core.dao.entity.*;
+import com.discuss.datatypes.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
@@ -111,7 +112,7 @@ public class DiscussDaoImpl implements DiscussDao {
         Criteria criteria = this.sessionFactory.
             getCurrentSession().
             createCriteria(Question.class).
-            setFetchMode("person", FetchMode.JOIN).
+            setFetchMode("person", FetchMode.SELECT).
             add(Restrictions.eq("questionId", questionId));
 
         @SuppressWarnings("unchecked")
@@ -245,5 +246,15 @@ public class DiscussDaoImpl implements DiscussDao {
         if(CollectionUtils.isEmpty(comments))
             return null;
         return comments.get(0);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public List<Tag> getCategoryList() {
+        Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Tag.class);
+
+        @SuppressWarnings("unchecked")
+        List<Tag> tags = criteria.list();
+        return tags;
     }
 }

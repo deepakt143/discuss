@@ -65,7 +65,10 @@ public interface DiscussController {
     boolean bookmarkQuestion(@RequestParam(value = "questionId", required = true) final String questionId,
                              @RequestHeader(value = "personId", required = true) final String personId);
 
-    @RequestMapping(method = RequestMethod.GET, value = {"/test"})
+    @RequestMapping(method = RequestMethod.GET, value = {"/category/list"})
+    List<Category> getCategoryList();
+
+    @RequestMapping(method = RequestMethod.GET, value = {"/category/preference"})
     List<Category> getQuestionCategoriesForPerson(@RequestParam(value = "personId", required = true) final int personId);
 
     @RequestMapping(method = RequestMethod.GET, value = {"/test1"})

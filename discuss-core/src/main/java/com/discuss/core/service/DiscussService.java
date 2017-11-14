@@ -30,4 +30,7 @@ public interface DiscussService {
     boolean bookmarkQuestion(String questionId, String personId);
 
     List<Category> getQuestionCategoriesForPerson(int personId);
+
+    List<Category> getCategoryList();
+
 }
