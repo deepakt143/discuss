@@ -5,4 +5,5 @@ CREATE TABLE question_tag (
     CONSTRAINT question_tag_question_id_fk FOREIGN KEY(question_id) REFERENCES question(question_id),
     CONSTRAINT question_tag_tag_id_fk FOREIGN KEY(tag_id) REFERENCES tag(tag_id)
 );
-CREATE INDEX question_tag_tag_id_idx on comment USING hash(tag_id);
+
+CREATE INDEX question_tag_tag_id_idx on question_tag USING hash(tag_id);

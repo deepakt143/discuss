@@ -139,7 +139,7 @@ crashlytics-build.properties
 *.tmPreferences.cache
 *.stTheme.cache
 
-# workspace files are user-specific
+# workspace files are person-specific
 *.sublime-workspace
 
 # project files should be checked into the repository, unless a significant

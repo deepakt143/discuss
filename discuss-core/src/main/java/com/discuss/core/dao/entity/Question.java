@@ -35,8 +35,12 @@ public class Question {
     private int imageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", foreignKey = @ForeignKey(name = "PERSON_ID_FK"))
-    private User user;
+    @JoinTable(
+        name="person_question_posts",
+        joinColumns = @JoinColumn( name="question_id"),
+        inverseJoinColumns = @JoinColumn( name="person_id")
+    )
+    private Person person;
 
     public Question() {
     }
@@ -69,8 +73,8 @@ public class Question {
         return this.imageId;
     }
 
-    public User getUser() {
-        return this.user;
+    public Person getPerson() {
+        return this.person;
     }
 
     public void setQuestionId(int questionId) {
@@ -101,8 +105,8 @@ public class Question {
         this.imageId = imageId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     public boolean equals(Object o) {
@@ -121,9 +125,9 @@ public class Question {
         final Object other$text = other.text;
         if (this$text == null ? other$text != null : !this$text.equals(other$text)) return false;
         if (this.imageId != other.imageId) return false;
-        final Object this$user = this.user;
-        final Object other$user = other.user;
-        if (this$user == null ? other$user != null : !this$user.equals(other$user)) return false;
+        final Object this$person = this.person;
+        final Object other$person = other.person;
+        if (this$person == null ? other$person != null : !this$person.equals(other$person)) return false;
         return true;
     }
 
@@ -139,8 +143,8 @@ public class Question {
         final Object $text = this.text;
         result = result * PRIME + ($text == null ? 0 : $text.hashCode());
         result = result * PRIME + this.imageId;
-        final Object $user = this.user;
-        result = result * PRIME + ($user == null ? 0 : $user.hashCode());
+        final Object $person = this.person;
+        result = result * PRIME + ($person == null ? 0 : $person.hashCode());
         return result;
     }
 
@@ -149,6 +153,6 @@ public class Question {
     }
 
     public String toString() {
-        return "com.discuss.core.dao.entity.Question(questionId=" + this.questionId + ", likes=" + this.likes + ", views=" + this.views + ", difficulty=" + this.difficulty + ", timestamp=" + this.timestamp + ", text=" + this.text + ", imageId=" + this.imageId + ", user=" + this.user + ")";
+        return "com.discuss.core.dao.entity.Question(questionId=" + this.questionId + ", likes=" + this.likes + ", views=" + this.views + ", difficulty=" + this.difficulty + ", timestamp=" + this.timestamp + ", text=" + this.text + ", imageId=" + this.imageId + ", person=" + this.person + ")";
     }
 }

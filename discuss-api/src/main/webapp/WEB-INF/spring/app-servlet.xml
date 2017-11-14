@@ -21,14 +21,14 @@
             class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:/placeholder.conf</value>
+                <value>classpath:/env.properties</value>
             </list>
         </property>
     </bean>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url" value="jdbc:postgresql://localhost:7634/discuss_db" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/discuss_db" />
         <property name="username" value="${USER}" />
         <property name="password" value="${PSWD}" />
         <property name="maxActive" value="4" />
@@ -50,12 +50,12 @@
                 <value>com.discuss.core.dao.entity.Question</value>
                 <value>com.discuss.core.dao.entity.QuestionTag</value>
                 <value>com.discuss.core.dao.entity.Tag</value>
-                <value>com.discuss.core.dao.entity.User</value>
-                <value>com.discuss.core.dao.entity.UserCommentLikes</value>
-                <value>com.discuss.core.dao.entity.UserQuestionBookmarks</value>
-                <value>com.discuss.core.dao.entity.UserQuestionLikes</value>
-                <value>com.discuss.core.dao.entity.UserQuestionPosts</value>
-                <value>com.discuss.core.dao.entity.UserTagInterests</value>
+                <value>com.discuss.core.dao.entity.Person</value>
+                <value>com.discuss.core.dao.entity.PersonCommentLikes</value>
+                <value>com.discuss.core.dao.entity.PersonQuestionBookmarks</value>
+                <value>com.discuss.core.dao.entity.PersonQuestionLikes</value>
+                <value>com.discuss.core.dao.entity.PersonQuestionPosts</value>
+                <value>com.discuss.core.dao.entity.PersonTagInterests</value>
             </list>
         </property>
         <property name="hibernateProperties">

@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>com.discuss</groupId>
-        <artifactId>discuss-api</artifactId>
+        <artifactId>discuss-server</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
 
-    <artifactId>discuss-service</artifactId>
+    <artifactId>discuss-api</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
@@ -22,5 +22,13 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>conf-template</directory>
+            </resource>
+        </resources>
+    </build>
 
 </project>

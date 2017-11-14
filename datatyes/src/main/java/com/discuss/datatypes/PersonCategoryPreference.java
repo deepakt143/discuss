@@ -7,11 +7,11 @@ import java.io.Serializable;
  *
  * @author Deepak Thakur
  */
-public class UserCategoryPreference implements Serializable {
+public class PersonCategoryPreference implements Serializable {
     private final Category category;
     private final boolean preferred;
 
-    public UserCategoryPreference(final Category category, final boolean preferred) {
+    public PersonCategoryPreference(final Category category, final boolean preferred) {
         this.category = category;
         this.preferred = preferred;
     }

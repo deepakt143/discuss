@@ -7,16 +7,16 @@ import lombok.Setter;
 import java.util.List;
 
 @Getter
-public class User {
-    private String userId;
+public class Person {
+    private String personId;
     private List<Question> questionsPosted;
     private List<Comment> commentsAdded;
     private int rating;
     private List<Question> bookMarked;
     private List<Category> categoriesOfInterest;
 
-    private User(UserBuilder userBuilder) {
-        this.userId = userBuilder.userId;
+    private Person(PersonBuilder userBuilder) {
+        this.personId = userBuilder.personId;
         this.questionsPosted = userBuilder.questionsPosted;
         this.commentsAdded = userBuilder.commentsAdded;
         this.rating = userBuilder.rating;
@@ -25,19 +25,19 @@ public class User {
     }
 
     @Setter
-    public static class UserBuilder {
-        private String userId;
+    public static class PersonBuilder {
+        private String personId;
         private List<Question> questionsPosted;
         private List<Comment> commentsAdded;
         private int rating;
         private List<Question> bookMarked;
         private List<Category> categoriesOfInterest;
 
-        public UserBuilder() {
+        public PersonBuilder() {
         }
 
-        public User build() {
-            return new User(this);
+        public Person build() {
+            return new Person(this);
         }
 
     }

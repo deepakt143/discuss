@@ -10,11 +10,12 @@ import java.util.Set;
 public class Comment implements Serializable{
     private int commentId;
     private String text;
-    private int imageId;
+    private String imageUrl;
     private int likes;
     private int views;
-    private int userId;                        /*   posted by whom    */
-    private String userName;                      /*   posted by whom    */
+    private int personId;                        /*   posted by whom    */
+    private String personName;                      /*   posted by whom    */
+    private boolean liked;
 
     public int getCommentId() {
         return commentId;
@@ -22,8 +23,8 @@ public class Comment implements Serializable{
     public String getText() {
         return text;
     }
-    public int getImageId() {
-        return imageId;
+    public String getImageUrl() {
+        return imageUrl;
     }
     public int getLikes() {
         return likes;
@@ -31,31 +32,39 @@ public class Comment implements Serializable{
     public int getViews() {
         return views;
     }
-    public int getUserId() {
-        return userId;
+    public int getPersonId() {
+        return personId;
     }
-    public String getUserName() {
-        return userName;
+    public String getPersonName() {
+        return personName;
+    }
+    public boolean isLiked() {
+        return liked;
+    }
+    public void setLiked(final boolean liked) {
+        this.liked = liked;
     }
 
     private Comment(CommentBuilder commentBuilder) {
         this.commentId = commentBuilder.commentId;
         this.text = commentBuilder.text;
-        this.imageId = commentBuilder.imageId;
+        this.imageUrl = commentBuilder.imageUrl;
         this.likes = commentBuilder.likes;
         this.views = commentBuilder.views;
-        this.userId = commentBuilder.userId;
-        this.userName = commentBuilder.userName;
+        this.personId = commentBuilder.personId;
+        this.personName = commentBuilder.personName;
+        this.liked = commentBuilder.liked;
     }
 
     public static class CommentBuilder {
         private int commentId;
         private String text;
-        private int imageId;
+        private String imageUrl;
         private int likes;
         private int views;
-        private int userId;                        /*   posted by whom    */
-        private String userName;                      /*   posted by whom    */
+        private int personId;                        /*   posted by whom    */
+        private String personName;                      /*   posted by whom    */
+        private boolean liked;
         public CommentBuilder() {
         }
         public Comment build() {
@@ -70,8 +79,8 @@ public class Comment implements Serializable{
             this.text = text;
             return this;
         }
-        public CommentBuilder setImageIds(final int imageId) {
-            this.imageId = imageId;
+        public CommentBuilder setImageUrl(final String imageUrl) {
+            this.imageUrl = imageUrl;
             return this;
         }
         public CommentBuilder setLikes(final int likes) {
@@ -82,12 +91,16 @@ public class Comment implements Serializable{
             this.views = views;
             return this;
         }
-        public CommentBuilder setUserId(final int userId) {
-            this.userId = userId;
+        public CommentBuilder setPersonId(final int personId) {
+            this.personId = personId;
             return this;
         }
-        public CommentBuilder setUserName(final String userName) {
-            this.userName = userName;
+        public CommentBuilder setPersonName(final String personName) {
+            this.personName = personName;
+            return this;
+        }
+        public CommentBuilder setLiked(final boolean liked) {
+            this.liked = liked;
             return this;
         }
     }

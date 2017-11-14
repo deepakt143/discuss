@@ -1,7 +1,7 @@
 package com.discuss.core.dao.entity;
 
 import javax.persistence.*;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 /**
  *
@@ -39,8 +39,8 @@ public class Comment {
     private Question question;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "comment_user_id_fk"))
-    private User user;
+    @JoinColumn(name = "person_id", foreignKey = @ForeignKey(name = "comment_person_id_fk"))
+    private Person person;
 
     public Comment() {
     }
@@ -77,8 +77,8 @@ public class Comment {
         return this.question;
     }
 
-    public User getUser() {
-        return this.user;
+    public Person getPerson() {
+        return this.person;
     }
 
     public void setCommentId(int commentId) {
@@ -113,8 +113,8 @@ public class Comment {
         this.question = question;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     public boolean equals(Object o) {
@@ -136,9 +136,9 @@ public class Comment {
         final Object this$question = this.question;
         final Object other$question = other.question;
         if (this$question == null ? other$question != null : !this$question.equals(other$question)) return false;
-        final Object this$user = this.user;
-        final Object other$user = other.user;
-        if (this$user == null ? other$user != null : !this$user.equals(other$user)) return false;
+        final Object this$person = this.person;
+        final Object other$person = other.person;
+        if (this$person == null ? other$person != null : !this$person.equals(other$person)) return false;
         return true;
     }
 
@@ -156,8 +156,8 @@ public class Comment {
         result = result * PRIME + this.imageId;
         final Object $question = this.question;
         result = result * PRIME + ($question == null ? 0 : $question.hashCode());
-        final Object $user = this.user;
-        result = result * PRIME + ($user == null ? 0 : $user.hashCode());
+        final Object $person = this.person;
+        result = result * PRIME + ($person == null ? 0 : $person.hashCode());
         return result;
     }
 
@@ -166,6 +166,6 @@ public class Comment {
     }
 
     public String toString() {
-        return "com.discuss.core.dao.entity.Comment(commentId=" + this.commentId + ", likes=" + this.likes + ", views=" + this.views + ", upvotes=" + this.upvotes + ", timestamp=" + this.timestamp + ", text=" + this.text + ", imageId=" + this.imageId + ", question=" + this.question + ", user=" + this.user + ")";
+        return "com.discuss.core.dao.entity.Comment(commentId=" + this.commentId + ", likes=" + this.likes + ", views=" + this.views + ", upvotes=" + this.upvotes + ", timestamp=" + this.timestamp + ", text=" + this.text + ", imageId=" + this.imageId + ", question=" + this.question + ", person=" + this.person + ")";
     }
 }

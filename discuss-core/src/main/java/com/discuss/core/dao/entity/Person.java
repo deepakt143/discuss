@@ -11,12 +11,12 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "person")
+public class Person {
 
     @Id
-    @Column(name = "user_id")
-    private int userId;
+    @Column(name = "person_id")
+    private int personId;
 
     @Column(name = "name")
     private String name;
@@ -24,11 +24,11 @@ public class User {
     @Column(name = "points")
     private int points;
 
-    public User() {
+    public Person() {
     }
 
-    public int getUserId() {
-        return this.userId;
+    public int getPersonId() {
+        return this.personId;
     }
 
     public String getName() {
@@ -39,8 +39,8 @@ public class User {
         return this.points;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 
     public void setName(String name) {
@@ -53,10 +53,10 @@ public class User {
 
     public boolean equals(Object o) {
         if (o == this) return true;
-        if (!(o instanceof User)) return false;
-        final User other = (User) o;
+        if (!(o instanceof Person)) return false;
+        final Person other = (Person) o;
         if (!other.canEqual((Object) this)) return false;
-        if (this.userId != other.userId) return false;
+        if (this.personId != other.personId) return false;
         final Object this$name = this.name;
         final Object other$name = other.name;
         if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
@@ -67,7 +67,7 @@ public class User {
     public int hashCode() {
         final int PRIME = 59;
         int result = 1;
-        result = result * PRIME + this.userId;
+        result = result * PRIME + this.personId;
         final Object $name = this.name;
         result = result * PRIME + ($name == null ? 0 : $name.hashCode());
         result = result * PRIME + this.points;
@@ -75,10 +75,10 @@ public class User {
     }
 
     protected boolean canEqual(Object other) {
-        return other instanceof User;
+        return other instanceof Person;
     }
 
     public String toString() {
-        return "com.discuss.core.dao.entity.User(userId=" + this.userId + ", name=" + this.name + ", points=" + this.points + ")";
+        return "com.discuss.core.dao.entity.Person(personId=" + this.personId + ", name=" + this.name + ", points=" + this.points + ")";
     }
 }

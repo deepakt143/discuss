@@ -5,7 +5,7 @@ CREATE TABLE question (
     difficulty INT DEFAULT(0),
     timestamp TIMESTAMP NOT NULL,
     text VARCHAR,
-    image_id VARCHAR,
+    image_id INT,
     CONSTRAINT question_pk PRIMARY KEY (question_id)
 );
 CREATE INDEX question_pk_idx ON question USING hash(question_id);

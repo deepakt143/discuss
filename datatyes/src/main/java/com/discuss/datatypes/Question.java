@@ -12,14 +12,15 @@ import java.util.Set;
 public class Question implements Serializable {
     private int questionId;
     private String text;
-    private int imageId;
+    private String imageUrl;
     //private List<String> commentIds;
     private int likes;
     private int views;
-    private int userId;                        /*   posted by whom    */
-    private String userName;                      /*   posted by whom    */
+    private int personId;                        /*   posted by whom    */
+    private String personName;                      /*   posted by whom    */
     private String difficulty;
     private boolean liked;
+    private boolean bookmarked;
 
     public int getQuestionId() {
         return questionId;
@@ -27,8 +28,8 @@ public class Question implements Serializable {
     public String getText() {
         return text;
     }
-    public int getImageId() {
-        return imageId;
+    public String getImageUrl() {
+        return imageUrl;
     }
     public int getLikes() {
         return likes;
@@ -36,11 +37,11 @@ public class Question implements Serializable {
     public int getViews() {
         return views;
     }
-    public int getUserId() {
-        return userId;
+    public int getPersonId() {
+        return personId;
     }
-    public String getUserName() {
-        return userName;
+    public String getPersonName() {
+        return personName;
     }
     public String getDifficulty() {
         return difficulty;
@@ -48,28 +49,34 @@ public class Question implements Serializable {
     public boolean isLiked() {
         return liked;
     }
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
     public void setLiked(final boolean liked) {
         this.liked = liked;
+    }
+    public void setBookmarked(final boolean bookmarked) {
+        this.bookmarked = bookmarked;
     }
     private Question(QuestionBuilder questionBuilder) {
         this.questionId = questionBuilder.questionId;
         this.text = questionBuilder.text;
-        this.imageId = questionBuilder.imageId;
+        this.imageUrl = questionBuilder.imageUrl;
        // this.commentIds = questionBuilder.commentIds;
         this.likes = questionBuilder.likes;
         this.views = questionBuilder.views;
-        this.userId = questionBuilder.userId;
-        this.userName = questionBuilder.userName;
+        this.personId = questionBuilder.personId;
+        this.personName = questionBuilder.personName;
     }
     public static class QuestionBuilder {
         private int questionId;
         private String text;
-        private int imageId;
+        private String imageUrl;
        // private List<String> commentIds;
         private int likes;
         private int views;
-        private int userId;                        /*   posted by whom    */
-        private String userName;                      /*   posted by whom    */
+        private int personId;                        /*   posted by whom    */
+        private String personName;                      /*   posted by whom    */
         private String difficulty;
         private boolean liked;
 
@@ -84,8 +91,8 @@ public class Question implements Serializable {
             this.text = text;
             return this;
         }
-        public QuestionBuilder setImageId(final int imageId) {
-            this.imageId = imageId;
+        public QuestionBuilder setImageUrl(final String imageUrl) {
+            this.imageUrl = imageUrl;
             return this;
         }
        /* public QuestionBuilder setCommentIds(final List<String> commentIds) {
@@ -100,12 +107,12 @@ public class Question implements Serializable {
             this.views = views;
             return this;
         }
-        public QuestionBuilder setUserId(final int userId) {
-            this.userId = userId;
+        public QuestionBuilder setPersonId(final int personId) {
+            this.personId = personId;
             return this;
         }
-        public QuestionBuilder setUserName(final String userName) {
-            this.userName = userName;
+        public QuestionBuilder setPersonName(final String personName) {
+            this.personName = personName;
             return this;
         }
         public QuestionBuilder setDifficulty(final String difficulty) {

@@ -4,78 +4,170 @@ package com.discuss.core.service.impl;
 import com.discuss.core.ServiceDaoEntityMapper;
 import com.discuss.core.Utils;
 import com.discuss.core.dao.DiscussDao;
+import com.discuss.core.dao.entity.Tag;
 import com.discuss.core.service.DiscussService;
+import com.discuss.datatypes.Category;
 import com.discuss.datatypes.Comment;
 import com.discuss.datatypes.Question;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class DiscussServiceImpl implements DiscussService {
 
     private final DiscussDao discussDao;
+    private static final List<Question> EMPTY_QUESTION_LIST = Lists.newArrayList();
+    private static final List<Comment> EMPTY_COMMENT_LIST = Lists.newArrayList();
 
     @Autowired
     public DiscussServiceImpl(DiscussDao discussDao) {
         this.discussDao = discussDao;
     }
-    
+
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Question> getQuestions(int category, int offset, int limit, String userId) {
-        return Utils.emptyIfNullList(discussDao.getQuestions(category, offset, limit, userId)).
-            stream().
-            map(ServiceDaoEntityMapper.questionMapper).
-            collect(Collectors.toList());
+    public List<Question> getQuestions(String sortBy,
+                                       String sortOrder,
+                                       int offset,
+                                       int limit,
+                                       int personId) {
+        List<Tag> tags = discussDao.getQuestionCategoriesForPerson(personId);
+        List<com.discuss.core.dao.entity.Question> questionEntities = discussDao.getQuestions(sortBy, sortOrder, offset, limit, personId, tags.stream().map(Tag::getTagId).collect(Collectors.toList()));
+
+        List<Question> questionList = CollectionUtils.isEmpty(questionEntities) ? EMPTY_QUESTION_LIST : questionEntities.stream().map(ServiceDaoEntityMapper.questionMapper).collect(Collectors.toList());
+        questionList.stream().forEach(question -> {
+            question.setLiked(discussDao.isQuestionLikedByPerson(question.getQuestionId(), personId));
+            question.setBookmarked(discussDao.isQuestionBookmarkedByPerson(question.getQuestionId(), personId));
+        });
+
+        return questionList;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Comment> getCommentsForQuestion(String questionId, int offset, int limit, String userId) {
-        return Utils.emptyIfNullList(discussDao.getCommentsForQuestion(questionId, offset, limit, userId)).
-            stream().
-            map(ServiceDaoEntityMapper.commentMapper).
-            collect(Collectors.toList());
+    public List<Comment> getCommentsForQuestion(int questionId,
+                                                String sortBy,
+                                                String sortOrder,
+                                                int offset,
+                                                int limit,
+                                                int personId) {
+        List<com.discuss.core.dao.entity.Comment> commentEntities = discussDao.getCommentsForQuestion(questionId, offset, limit, personId);
+        List<Comment> commentList = CollectionUtils.isEmpty(commentEntities) ? EMPTY_COMMENT_LIST : commentEntities.stream().map(ServiceDaoEntityMapper.commentMapper).collect(Collectors.toList());
+        commentList.stream().forEach(comment -> {
+            comment.setLiked(discussDao.isCommentLikedByPerson(comment.getCommentId(), personId));
+        });
+
+        return commentList;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Question> getBookMarkedQuestions(int offset, int limit, String userId) {
-        return Utils.emptyIfNullList(discussDao.getBookMarkedQuestions(offset, limit, userId)).
-            stream().
-            map(ServiceDaoEntityMapper.questionMapper).
-            collect(Collectors.toList());
+    public List<Question> getBookMarkedQuestions(int offset, int limit, int personId) {
+        List<com.discuss.core.dao.entity.Question> questionEntities = discussDao.getBookMarkedQuestions(offset, limit, personId);
+        List<Question> questionList = CollectionUtils.isEmpty(questionEntities) ? EMPTY_QUESTION_LIST : questionEntities.stream().map(ServiceDaoEntityMapper.questionMapper).collect(Collectors.toList());
+        questionList.stream().forEach(question -> {
+            question.setLiked(discussDao.isQuestionLikedByPerson(question.getQuestionId(), personId));
+            question.setBookmarked(discussDao.isQuestionBookmarkedByPerson(question.getQuestionId(), personId));
+        });
+
+        return questionList;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Comment> getUserAddedComments(int offset, int limit, String userId) {
-        return Utils.emptyIfNullList(discussDao.getUserAddedComments(offset, limit, userId)).
-            stream().
-            map(ServiceDaoEntityMapper.commentMapper).
-            collect(Collectors.toList());
+    public List<Question> getLikedQuestions(int offset, int limit, int personId) {
+        List<com.discuss.core.dao.entity.Question> questionEntities = discussDao.getLikedQuestions(offset, limit, personId);
+        List<Question> questionList = CollectionUtils.isEmpty(questionEntities) ? EMPTY_QUESTION_LIST : questionEntities.stream().map(ServiceDaoEntityMapper.questionMapper).collect(Collectors.toList());
+        questionList.stream().forEach(question -> {
+            question.setLiked(discussDao.isQuestionLikedByPerson(question.getQuestionId(), personId));
+            question.setBookmarked(discussDao.isQuestionBookmarkedByPerson(question.getQuestionId(), personId));
+        });
+
+        return questionList;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Question getQuestion(String questionId, String userId) {
-        com.discuss.core.dao.entity.Question question = discussDao.getQuestion(questionId, userId);
+    public List<Question> getQuestionsCommented(int offset, int limit, int personId) {
+        List<com.discuss.core.dao.entity.Question> questionEntities = discussDao.getQuestionsCommented(offset, limit, personId);
+        List<Question> questionList = CollectionUtils.isEmpty(questionEntities) ? EMPTY_QUESTION_LIST : questionEntities.stream().map(ServiceDaoEntityMapper.questionMapper).collect(Collectors.toList());
+        questionList.stream().forEach(question -> {
+            question.setLiked(discussDao.isQuestionLikedByPerson(question.getQuestionId(), personId));
+            question.setBookmarked(discussDao.isQuestionBookmarkedByPerson(question.getQuestionId(), personId));
+        });
+
+        return questionList;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Comment getPersonAddedCommentOnQuestion(int questionId, int personId) {
+        com.discuss.core.dao.entity.Comment comment = discussDao.getPersonAddedCommentOnQuestion(questionId, personId);
+        if(comment == null)
+            return null;
+        Comment comment1 = ServiceDaoEntityMapper.commentMapper.apply(comment);
+        comment1.setLiked(discussDao.isCommentLikedByPerson(comment1.getCommentId(), personId));
+        return comment1;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Question getQuestion(int questionId, int personId) {
+        com.discuss.core.dao.entity.Question question = discussDao.getQuestion(questionId, personId);
         if(null != question) {
-            return ServiceDaoEntityMapper.questionMapper.apply(question);
+            Question question1 = ServiceDaoEntityMapper.questionMapper.apply(question);
+            question1.setLiked(discussDao.isQuestionLikedByPerson(question.getQuestionId(), personId));
+            question1.setBookmarked(discussDao.isQuestionBookmarkedByPerson(question.getQuestionId(), personId));
+            return question1;
         }
         return null;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean likeQuestion(String questionId, String userId) {
-        return discussDao.likeQuestion(questionId, userId);
+    public boolean likeQuestion(String questionId, String personId) {
+        return discussDao.likeQuestion(questionId, personId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean likeComment(String commentId, String userId) {
-        return discussDao.likeComment(commentId, userId);
+    public boolean likeComment(String commentId, String personId) {
+        return discussDao.likeComment(commentId, personId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean bookmarkQuestion(String questionId, String userId) {
-        return discussDao.bookmarkQuestion(questionId, userId);
+    public boolean bookmarkQuestion(String questionId, String personId) {
+        return false;//discussDao.bookmarkQuestion(questionId, personId);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public List<Category> getQuestionCategoriesForPerson(int personId) {
+        return discussDao.getQuestionCategoriesForPerson(personId).stream().map(new Function<Tag, Category>() {
+            @Override
+            public Category apply(Tag tag) {
+                switch (tag.getName()) {
+                    case "GRE":
+                        return Category.GRE;
+                    case "GMAT":
+                        return Category.GMAT;
+                    case "CAT":
+                        return Category.CAT;
+                }
+                return null;
+            }
+        }).collect(Collectors.toList());
+    }
+
+
 }
