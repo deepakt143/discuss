@@ -5,14 +5,18 @@ import com.discuss.core.service.DiscussService;
 import com.discuss.datatypes.Category;
 import com.discuss.datatypes.Comment;
 import com.discuss.datatypes.Question;
+import com.discuss.datatypes.request.CommentAdditionRequest;
 import core.discuss.service.controller.DiscussController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
+/**
+ *
+ * @author Deepak Thakur
+ */
 @Controller
 public class DiscussControllerImpl implements DiscussController {
 
@@ -58,18 +62,23 @@ public class DiscussControllerImpl implements DiscussController {
     }
 
     @Override
-    public boolean likeQuestion(String questionId, String personId) {
+    public boolean likeQuestion(int questionId, int personId) {
         return discussService.likeQuestion(questionId, personId);
     }
 
     @Override
-    public boolean likeComment(String questionId, String personId) {
-        return discussService.likeComment(questionId, personId);
+    public boolean likeComment(int commentId, int personId) {
+        return discussService.likeComment(commentId, personId);
     }
 
     @Override
-    public boolean bookmarkQuestion(String questionId, String personId) {
+    public boolean bookmarkQuestion(int questionId, int personId) {
         return discussService.bookmarkQuestion(questionId, personId);
+    }
+
+    @Override
+    public Comment addComment(CommentAdditionRequest commentAdditionRequest) {
+        return discussService.addComment(commentAdditionRequest);
     }
 
     @Override

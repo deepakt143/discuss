@@ -9,6 +9,7 @@ import com.discuss.core.service.DiscussService;
 import com.discuss.datatypes.Category;
 import com.discuss.datatypes.Comment;
 import com.discuss.datatypes.Question;
+import com.discuss.datatypes.request.CommentAdditionRequest;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class DiscussServiceImpl implements DiscussService {
                                        int limit,
                                        int personId) {
         List<Tag> tags = discussDao.getQuestionCategoriesForPerson(personId);
-        List<com.discuss.core.dao.entity.Question> questionEntities = discussDao.getQuestions(sortBy, sortOrder, offset, limit, personId, tags.stream().map(Tag::getTagId).collect(Collectors.toList()));
+        List<com.discuss.core.dao.entity.Question> questionEntities = discussDao.getQuestions(sortBy, sortOrder, offset, limit, tags.stream().map(Tag::getTagId).collect(Collectors.toList()));
 
         List<Question> questionList = CollectionUtils.isEmpty(questionEntities) ? EMPTY_QUESTION_LIST : questionEntities.stream().map(ServiceDaoEntityMapper.questionMapper).collect(Collectors.toList());
         questionList.stream().forEach(question -> {
@@ -61,7 +62,7 @@ public class DiscussServiceImpl implements DiscussService {
                                                 int offset,
                                                 int limit,
                                                 int personId) {
-        List<com.discuss.core.dao.entity.Comment> commentEntities = discussDao.getCommentsForQuestion(questionId, offset, limit, personId);
+        List<com.discuss.core.dao.entity.Comment> commentEntities = discussDao.getCommentsForQuestion(questionId, offset, limit);
         List<Comment> commentList = CollectionUtils.isEmpty(commentEntities) ? EMPTY_COMMENT_LIST : commentEntities.stream().map(ServiceDaoEntityMapper.commentMapper).collect(Collectors.toList());
         commentList.stream().forEach(comment -> {
             comment.setLiked(discussDao.isCommentLikedByPerson(comment.getCommentId(), personId));
@@ -123,7 +124,7 @@ public class DiscussServiceImpl implements DiscussService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Question getQuestion(int questionId, int personId) {
-        com.discuss.core.dao.entity.Question question = discussDao.getQuestion(questionId, personId);
+        com.discuss.core.dao.entity.Question question = discussDao.getQuestion(questionId);
         if(null != question) {
             Question question1 = ServiceDaoEntityMapper.questionMapper.apply(question);
             question1.setLiked(discussDao.isQuestionLikedByPerson(question.getQuestionId(), personId));
@@ -135,20 +136,29 @@ public class DiscussServiceImpl implements DiscussService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean likeQuestion(String questionId, String personId) {
+    public boolean likeQuestion(int questionId, int personId) {
         return discussDao.likeQuestion(questionId, personId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean likeComment(String commentId, String personId) {
+    public boolean likeComment(int commentId, int personId) {
         return discussDao.likeComment(commentId, personId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean bookmarkQuestion(String questionId, String personId) {
-        return false;//discussDao.bookmarkQuestion(questionId, personId);
+    public boolean bookmarkQuestion(int questionId, int personId) {
+        return discussDao.bookmarkQuestion(questionId, personId);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Comment addComment(CommentAdditionRequest commentAdditionRequest) {
+        com.discuss.core.dao.entity.Comment comment = discussDao.addComment(commentAdditionRequest);
+        if(comment == null)
+            return null;
+        return ServiceDaoEntityMapper.commentMapper.apply(comment);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

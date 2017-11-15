@@ -8,7 +8,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * @author Deepak Thakur
+ */
 public class Question implements Serializable {
     private int questionId;
     private String text;

@@ -10,9 +10,11 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "comment")
+@SequenceGenerator(name = "comment_id_seq_gen", sequenceName = "comment_id_seq", allocationSize = 1)
 public class Comment {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_id_seq_gen")
     @Column(name = "comment_id")
     private int commentId;
 

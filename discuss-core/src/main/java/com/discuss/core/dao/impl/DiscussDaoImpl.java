@@ -3,23 +3,27 @@ package com.discuss.core.dao.impl;
 
 import com.discuss.core.dao.DiscussDao;
 import com.discuss.core.dao.entity.*;
-import com.discuss.datatypes.Category;
+import com.discuss.core.dao.entity.Comment;
+import com.discuss.core.dao.entity.Person;
+import com.discuss.core.dao.entity.Question;
+import com.discuss.datatypes.*;
+import com.discuss.datatypes.request.CommentAdditionRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 
+import org.hibernate.type.IntegerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +35,7 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Question> getQuestions(String sortBy, String sortOrder, int offset, int limit, int personId, List<Integer> tagIds) {
+    public List<Question> getQuestions(String sortBy, String sortOrder, int offset, int limit, List<Integer> tagIds) {
         Criteria criteria = this.sessionFactory.
             getCurrentSession().
             createCriteria(QuestionTag.class).
@@ -46,7 +50,7 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Comment> getCommentsForQuestion(int questionId, int offset, int limit, int personId) {
+    public List<Comment> getCommentsForQuestion(int questionId, int offset, int limit) {
         Criteria criteria = this.sessionFactory.
             getCurrentSession().
             createCriteria(Comment.class).
@@ -108,7 +112,7 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Question getQuestion(int questionId, int personId) {
+    public Question getQuestion(int questionId) {
         Criteria criteria = this.sessionFactory.
             getCurrentSession().
             createCriteria(Question.class).
@@ -122,17 +126,17 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean likeQuestion(String questionId, String personId) {
+    public boolean likeQuestion(int questionId, int personId) {
 
-        SQLQuery query1 = this.sessionFactory.getCurrentSession().createSQLQuery("SELECT COUNT(*) as presence FROM person_question_likes WHERE person_id = (:person_id) AND question_id = :question_id");
+        SQLQuery query1 = this.sessionFactory.getCurrentSession().createSQLQuery("SELECT COUNT(*) as presence FROM person_question_likes WHERE person_id = (:person_id) AND question_id = (:question_id)");
         query1.setParameter("person_id", personId);
         query1.setParameter("question_id", questionId);
-        query1.addEntity("presence", Integer.class);
+        query1.addScalar("presence", new IntegerType());
 
         @SuppressWarnings(value = "unchecked")
-        List<Integer> list = query1.list();
+        int count = (int) query1.uniqueResult();
 
-        if(CollectionUtils.isNotEmpty(list) && list.get(0)  > 0)
+        if(count > 0)
             return false;
 
         SQLQuery query = this.sessionFactory.getCurrentSession().createSQLQuery("INSERT INTO person_question_likes (person_id, question_id) VALUES (:person_id, :question_id)");
@@ -144,18 +148,17 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean likeComment(String commentId, String personId) {
+    public boolean likeComment(int commentId, int personId) {
         SQLQuery query1 = this.sessionFactory.getCurrentSession().createSQLQuery("SELECT COUNT(*) as presence FROM person_comment_likes WHERE person_id = (:person_id) AND comment_id = :comment_id");
         query1.setParameter("person_id", personId);
         query1.setParameter("comment_id", commentId);
-        query1.addEntity("presence", Integer.class);
+        query1.addScalar("presence", new IntegerType());
 
         @SuppressWarnings(value = "unchecked")
-        List<Integer> list = query1.list();
+        int count = (int) query1.uniqueResult();
 
-        if(CollectionUtils.isNotEmpty(list) && list.get(0) > 0)
+        if(count > 0)
             return false;
-
 
         SQLQuery query = this.sessionFactory.getCurrentSession().createSQLQuery("INSERT INTO person_comment_likes (person_id, comment_id) VALUES (:person_id, :comment_id)");
         query.setParameter("person_id", personId);
@@ -166,16 +169,16 @@ public class DiscussDaoImpl implements DiscussDao {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public boolean bookmarkQuestion(String questionId, int personId) {
+    public boolean bookmarkQuestion(int questionId, int personId) {
         SQLQuery query1 = this.sessionFactory.getCurrentSession().createSQLQuery("SELECT COUNT(*) as presence FROM person_question_bookmarks WHERE person_id = (:person_id) AND question_id = :question_id");
         query1.setParameter("person_id", personId);
         query1.setParameter("question_id", questionId);
-        query1.addEntity("presence", Integer.class);
+        query1.addScalar("presence", new IntegerType());
 
         @SuppressWarnings(value = "unchecked")
-        List<Integer> list = query1.list();
+        int count = (int) query1.uniqueResult();
 
-        if(CollectionUtils.isNotEmpty(list) && list.get(0) > 0)
+        if(count > 0)
             return false;
 
         SQLQuery query = this.sessionFactory.getCurrentSession().createSQLQuery("INSERT INTO person_question_bookmarks (person_id, question_id) VALUES (:person_id, :question_id)");
@@ -183,6 +186,26 @@ public class DiscussDaoImpl implements DiscussDao {
         query.setParameter("question_id", questionId);
         query.executeUpdate();
         return true;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Comment addComment(CommentAdditionRequest commentAdditionRequest) {
+        Comment comment = new Comment();
+        comment.setImageId(-1);
+        comment.setLikes(0);
+        comment.setUpvotes(0);
+        comment.setViews(0);
+
+        comment.setText(commentAdditionRequest.getText());
+        comment.setPerson(getPerson(commentAdditionRequest.getPersonId()));
+        comment.setQuestion(getQuestion(commentAdditionRequest.getQuestionId()));
+
+        Date date = new Date();
+        comment.setTimestamp(new Timestamp(date.getTime()));
+
+        this.sessionFactory.getCurrentSession().save(comment);
+        return comment;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -256,5 +279,15 @@ public class DiscussDaoImpl implements DiscussDao {
         @SuppressWarnings("unchecked")
         List<Tag> tags = criteria.list();
         return tags;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Person getPerson(int personId) {
+        Criteria criteria = this.sessionFactory.getCurrentSession()
+            .createCriteria(Person.class)
+            .add(Restrictions.eq("personId", personId));
+
+        return (Person) criteria.uniqueResult();
     }
 }

@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * @author Deepak Thakur
+ */
 @Getter
 public class Person {
     private String personId;

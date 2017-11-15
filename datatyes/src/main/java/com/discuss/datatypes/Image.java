@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * @author Deepak Thakur
+ */
 @Getter
 public class Image {
     private String imageId;

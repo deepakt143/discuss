@@ -1,18 +1,17 @@
 package com.discuss.core.dao;
 
-
-
 import com.discuss.core.dao.entity.Comment;
+import com.discuss.core.dao.entity.Person;
 import com.discuss.core.dao.entity.Question;
 import com.discuss.core.dao.entity.Tag;
-import com.discuss.datatypes.Category;
+import com.discuss.datatypes.request.CommentAdditionRequest;
 
 import java.util.List;
 
 public interface DiscussDao {
-    List<Question> getQuestions(String sortBy, String sortOrder, int offset, int limit, int personId, List<Integer> tagIds);
+    List<Question> getQuestions(String sortBy, String sortOrder, int offset, int limit, List<Integer> tagIds);
 
-    List<Comment> getCommentsForQuestion(int questionId, int offset, int limit, int personId);
+    List<Comment> getCommentsForQuestion(int questionId, int offset, int limit);
 
     List<Question> getBookMarkedQuestions(int offset, int limit, int personId);
 
@@ -20,13 +19,15 @@ public interface DiscussDao {
 
     List<Question> getQuestionsCommented(int offset, int limit, int personId);
 
-    Question getQuestion(int questionId, int personId);
+    Question getQuestion(int questionId);
 
-    boolean likeQuestion(String questionId, String personId);
+    boolean likeQuestion(int questionId, int personId);
 
-    boolean likeComment(String questionId, String personId);
+    boolean likeComment(int commentId, int personId);
 
-    boolean bookmarkQuestion(String questionId, int personId);
+    boolean bookmarkQuestion(int questionId, int personId);
+
+    Comment addComment(CommentAdditionRequest commentAdditionRequest);
 
     List<Tag> getQuestionCategoriesForPerson(int personId);
 
@@ -39,5 +40,7 @@ public interface DiscussDao {
     Comment getPersonAddedCommentOnQuestion(int questionId, int personId);
 
     List<Tag> getCategoryList();
+
+    Person getPerson(int personId);
 
 }

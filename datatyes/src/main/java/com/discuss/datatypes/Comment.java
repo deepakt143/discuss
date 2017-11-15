@@ -6,7 +6,9 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.util.Set;
 
-
+/**
+ * @author Deepak Thakur
+ */
 public class Comment implements Serializable{
     private int commentId;
     private String text;

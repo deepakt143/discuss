@@ -13,4 +13,10 @@
     <mvc:annotation-driven />
     <context:component-scan base-package="core.discuss.service.controller" />
 
+    <bean
+            class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+
+    <bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    </bean>
+
 </beans>

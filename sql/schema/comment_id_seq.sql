@@ -1,0 +1,1 @@
+CREATE SEQUENCE comment_id_seq START 1;

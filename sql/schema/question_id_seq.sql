@@ -1,0 +1,1 @@
+CREATE SEQUENCE question_id_seq START 1;
