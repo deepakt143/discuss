@@ -208,6 +208,16 @@ public class DiscussDaoImpl implements DiscussDao {
         return comment;
     }
 
+    @Override
+    public boolean commentAlreadyExistsFor(int questionId, int personId) {
+        return 0 != (long) this.sessionFactory
+            .getCurrentSession()
+            .createCriteria(Comment.class)
+            .add(Restrictions.eq("person.personId", personId))
+            .add(Restrictions.eq("question.questionId", questionId))
+            .setProjection(Projections.rowCount()).uniqueResult();
+    }
+
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public List<Tag> getQuestionCategoriesForPerson(int personId) {

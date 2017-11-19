@@ -29,6 +29,8 @@ public interface DiscussDao {
 
     Comment addComment(CommentAdditionRequest commentAdditionRequest);
 
+    boolean commentAlreadyExistsFor(int questionId, int personId);
+
     List<Tag> getQuestionCategoriesForPerson(int personId);
 
     boolean isQuestionLikedByPerson(int questionId, int personId);

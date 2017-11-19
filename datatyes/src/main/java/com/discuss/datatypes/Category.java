@@ -23,8 +23,11 @@ public enum Category {
         nameToCategoryMap = builder.build();
     }
 
-    @Getter
     private final String name;
+
+    public String getName() {
+        return name;
+    }
     Category(String name) {
         this.name = name;
     }

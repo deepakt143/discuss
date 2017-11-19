@@ -10,6 +10,7 @@ import com.discuss.datatypes.Category;
 import com.discuss.datatypes.Comment;
 import com.discuss.datatypes.Question;
 import com.discuss.datatypes.request.CommentAdditionRequest;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,9 @@ import java.util.stream.Collectors;
 public class DiscussServiceImpl implements DiscussService {
 
     private final DiscussDao discussDao;
-    private static final List<Question> EMPTY_QUESTION_LIST = Lists.newArrayList();
-    private static final List<Comment> EMPTY_COMMENT_LIST = Lists.newArrayList();
-    private static final List<Category> EMPTY_CATEGORY_LIST = Lists.newArrayList();
+    private static final List<Question> EMPTY_QUESTION_LIST = ImmutableList.of();
+    private static final List<Comment> EMPTY_COMMENT_LIST = ImmutableList.of();
+    private static final List<Category> EMPTY_CATEGORY_LIST = ImmutableList.of();
 
     @Autowired
     public DiscussServiceImpl(DiscussDao discussDao) {
@@ -43,6 +44,10 @@ public class DiscussServiceImpl implements DiscussService {
                                        int limit,
                                        int personId) {
         List<Tag> tags = discussDao.getQuestionCategoriesForPerson(personId);
+
+        if(CollectionUtils.isEmpty(tags))
+            return EMPTY_QUESTION_LIST;
+
         List<com.discuss.core.dao.entity.Question> questionEntities = discussDao.getQuestions(sortBy, sortOrder, offset, limit, tags.stream().map(Tag::getTagId).collect(Collectors.toList()));
 
         List<Question> questionList = CollectionUtils.isEmpty(questionEntities) ? EMPTY_QUESTION_LIST : questionEntities.stream().map(ServiceDaoEntityMapper.questionMapper).collect(Collectors.toList());
@@ -155,7 +160,12 @@ public class DiscussServiceImpl implements DiscussService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Comment addComment(CommentAdditionRequest commentAdditionRequest) {
+
+        if(discussDao.commentAlreadyExistsFor(commentAdditionRequest.getQuestionId(), commentAdditionRequest.getPersonId()))
+            return null;
+
         com.discuss.core.dao.entity.Comment comment = discussDao.addComment(commentAdditionRequest);
+
         if(comment == null)
             return null;
         return ServiceDaoEntityMapper.commentMapper.apply(comment);

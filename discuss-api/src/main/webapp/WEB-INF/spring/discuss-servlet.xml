@@ -13,10 +13,16 @@
     <mvc:annotation-driven />
     <context:component-scan base-package="core.discuss.service.controller" />
 
-    <bean
-            class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
-
-    <bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="jsonMessageConverter"/>
+            </list>
+        </property>
     </bean>
+
+    &lt;!&ndash; Configure bean to convert JSON to POJO and vice versa &ndash;&gt;
+    <bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    </bean>-->
 
 </beans>
