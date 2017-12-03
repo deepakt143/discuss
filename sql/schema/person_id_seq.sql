@@ -1,0 +1,1 @@
+CREATE SEQUENCE person_id_seq START 1;

@@ -1,0 +1,80 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <context:component-scan base-package="com.discuss.core">
+        <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation"/>
+    </context:component-scan>
+
+    <bean
+            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:/env.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="imageStore" class="com.discuss.core.dao.impl.ImageStoreImpl">
+        <constructor-arg value="${image-dir}"/>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/discuss_db" />
+        <property name="username" value="${USER}" />
+        <property name="password" value="${PSWD}" />
+        <property name="maxActive" value="4" />
+        <property name="maxIdle" value="4" />
+        <property name="minIdle" value="4" />
+        <property name="maxWait" value="4" />
+        <property name="testOnBorrow" value="true" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="60" />
+        <property name="timeBetweenEvictionRunsMillis" value="900000" />
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.discuss.core.dao.entity.Comment</value>
+                <value>com.discuss.core.dao.entity.Question</value>
+                <value>com.discuss.core.dao.entity.QuestionTag</value>
+                <value>com.discuss.core.dao.entity.Tag</value>
+                <value>com.discuss.core.dao.entity.Person</value>
+                <value>com.discuss.core.dao.entity.PersonCommentLikes</value>
+                <value>com.discuss.core.dao.entity.PersonQuestionBookmarks</value>
+                <value>com.discuss.core.dao.entity.PersonQuestionLikes</value>
+                <value>com.discuss.core.dao.entity.PersonQuestionPosts</value>
+                <value>com.discuss.core.dao.entity.PersonTagInterests</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+</beans>
