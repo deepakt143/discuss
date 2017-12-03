@@ -5,6 +5,7 @@ import com.discuss.core.dao.entity.Person;
 import com.discuss.core.dao.entity.Question;
 import com.discuss.core.dao.entity.Tag;
 import com.discuss.datatypes.request.CommentAdditionRequest;
+import com.discuss.datatypes.request.QuestionAdditionRequest;
 
 import java.util.List;
 
@@ -28,6 +29,8 @@ public interface DiscussDao {
     boolean bookmarkQuestion(int questionId, int personId);
 
     Comment addComment(CommentAdditionRequest commentAdditionRequest);
+
+    Question addQuestion(QuestionAdditionRequest questionAdditionRequest);
 
     boolean commentAlreadyExistsFor(int questionId, int personId);
 

@@ -12,13 +12,15 @@ import java.util.function.Function;
  */
 public class ServiceDaoEntityMapper {
 
-    public static Function<Comment, com.discuss.datatypes.Comment> commentMapper = comment -> new com.discuss.datatypes.Comment.CommentBuilder().
+    public static Function<Comment, com.discuss.datatypes.Comment> commentMapper = comment -> com.discuss.datatypes.Comment.builder().
         setCommentId(comment.getCommentId()).
         setText(comment.getText()).
         setLikes(comment.getLikes()).
         setViews(comment.getViews()).
         setPersonId(comment.getPerson().getPersonId()).
-        setPersonName(comment.getPerson().getName()).build();
+        setPersonName(comment.getPerson().getName()).
+        setImageUrl(comment.getImageId()).
+        build();
 
     public static Function<Question, com.discuss.datatypes.Question> questionMapper = question -> new com.discuss.datatypes.Question.QuestionBuilder().
         setQuestionId(question.getQuestionId()).
@@ -27,11 +29,8 @@ public class ServiceDaoEntityMapper {
         setViews(question.getViews()).
         setPersonId(question.getPerson().getPersonId()).
         setPersonName(question.getPerson().getName()).
+        setImageUrl(question.getImageId()).
         build();
 
-    public static Function<Tag, Category> categoryMapper = tag -> {
-        if (tag == null)
-            return null;
-        return Category.findByName(tag.getName());
-    };
+    public static Function<Tag, Category> categoryMapper = tag -> Category.findByName(tag.getName()).orElse(null);
 }

@@ -4,15 +4,18 @@ package com.discuss.core.service.impl;
 import com.discuss.core.ServiceDaoEntityMapper;
 import com.discuss.core.Utils;
 import com.discuss.core.dao.DiscussDao;
+import com.discuss.core.dao.ImageStore;
 import com.discuss.core.dao.entity.Tag;
 import com.discuss.core.service.DiscussService;
 import com.discuss.datatypes.Category;
 import com.discuss.datatypes.Comment;
 import com.discuss.datatypes.Question;
 import com.discuss.datatypes.request.CommentAdditionRequest;
+import com.discuss.datatypes.request.QuestionAdditionRequest;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,17 +26,23 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ *
+ * @author Deepak Thakur
+ */
 @Service
 public class DiscussServiceImpl implements DiscussService {
 
     private final DiscussDao discussDao;
+    private final ImageStore imageStore;
     private static final List<Question> EMPTY_QUESTION_LIST = ImmutableList.of();
     private static final List<Comment> EMPTY_COMMENT_LIST = ImmutableList.of();
     private static final List<Category> EMPTY_CATEGORY_LIST = ImmutableList.of();
 
     @Autowired
-    public DiscussServiceImpl(DiscussDao discussDao) {
+    public DiscussServiceImpl(DiscussDao discussDao, ImageStore imageStore) {
         this.discussDao = discussDao;
+        this.imageStore = imageStore;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -174,20 +183,10 @@ public class DiscussServiceImpl implements DiscussService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public List<Category> getQuestionCategoriesForPerson(int personId) {
-        return discussDao.getQuestionCategoriesForPerson(personId).stream().map(new Function<Tag, Category>() {
-            @Override
-            public Category apply(Tag tag) {
-                switch (tag.getName()) {
-                    case "GRE":
-                        return Category.GRE;
-                    case "GMAT":
-                        return Category.GMAT;
-                    case "CAT":
-                        return Category.CAT;
-                }
-                return null;
-            }
-        }).collect(Collectors.toList());
+        return discussDao.getQuestionCategoriesForPerson(personId)
+            .stream()
+            .map(tag -> Tag.getCategoryForTag(tag).orElse(null))
+            .collect(Collectors.toList());
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -195,6 +194,19 @@ public class DiscussServiceImpl implements DiscussService {
     public List<Category> getCategoryList() {
         List<Tag> tags = discussDao.getCategoryList();
         return CollectionUtils.isEmpty(tags) ? EMPTY_CATEGORY_LIST : tags.stream().map(ServiceDaoEntityMapper.categoryMapper).collect(Collectors.toList());
+    }
+
+    @Override
+    public Question addQuestion(QuestionAdditionRequest questionAdditionRequest) {
+        if(StringUtils.isNotBlank(questionAdditionRequest.getImage())) {
+            String savedImagePath = imageStore.storeImage(questionAdditionRequest.getImage());
+            questionAdditionRequest.setImage(savedImagePath);
+        }
+
+        com.discuss.core.dao.entity.Question question = discussDao.addQuestion(questionAdditionRequest);
+        if(question == null)
+            return null;
+        return ServiceDaoEntityMapper.questionMapper.apply(question);
     }
 
 

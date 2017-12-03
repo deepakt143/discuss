@@ -1,6 +1,7 @@
 package com.discuss.core.dao.impl;
 
 
+import com.discuss.core.Utils;
 import com.discuss.core.dao.DiscussDao;
 import com.discuss.core.dao.entity.*;
 import com.discuss.core.dao.entity.Comment;
@@ -8,8 +9,10 @@ import com.discuss.core.dao.entity.Person;
 import com.discuss.core.dao.entity.Question;
 import com.discuss.datatypes.*;
 import com.discuss.datatypes.request.CommentAdditionRequest;
+import com.discuss.datatypes.request.QuestionAdditionRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.*;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -192,7 +195,7 @@ public class DiscussDaoImpl implements DiscussDao {
     @Override
     public Comment addComment(CommentAdditionRequest commentAdditionRequest) {
         Comment comment = new Comment();
-        comment.setImageId(-1);
+        comment.setImageId("-1");
         comment.setLikes(0);
         comment.setUpvotes(0);
         comment.setViews(0);
@@ -200,12 +203,28 @@ public class DiscussDaoImpl implements DiscussDao {
         comment.setText(commentAdditionRequest.getText());
         comment.setPerson(getPerson(commentAdditionRequest.getPersonId()));
         comment.setQuestion(getQuestion(commentAdditionRequest.getQuestionId()));
-
-        Date date = new Date();
-        comment.setTimestamp(new Timestamp(date.getTime()));
+        comment.setTimestamp(Utils.getTimeStamp());
 
         this.sessionFactory.getCurrentSession().save(comment);
         return comment;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Question addQuestion(QuestionAdditionRequest questionAdditionRequest) {
+        Question question = new Question();
+        question.setDifficulty(questionAdditionRequest.getDifficulty());
+        question.setLikes(0);
+        question.setViews(0);
+        if(StringUtils.isNotBlank(questionAdditionRequest.getImage())) {
+            question.setImageId(questionAdditionRequest.getImage());
+        }
+        question.setText(questionAdditionRequest.getText());
+        question.setPerson(getPerson(questionAdditionRequest.getPersonID()));
+        question.setTimestamp(Utils.getTimeStamp());
+        this.sessionFactory.getCurrentSession().save(question);
+
+        return question;
     }
 
     @Override

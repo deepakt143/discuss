@@ -5,6 +5,7 @@ import com.discuss.datatypes.Category;
 import com.discuss.datatypes.Comment;
 import com.discuss.datatypes.Question;
 import com.discuss.datatypes.request.CommentAdditionRequest;
+import com.discuss.datatypes.request.QuestionAdditionRequest;
 
 import java.util.List;
 
@@ -36,4 +37,5 @@ public interface DiscussService {
 
     List<Category> getCategoryList();
 
+    Question addQuestion(QuestionAdditionRequest questionAdditionRequest);
 }

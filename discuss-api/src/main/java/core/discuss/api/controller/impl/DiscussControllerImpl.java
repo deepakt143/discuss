@@ -1,4 +1,4 @@
-package core.discuss.service.controller.impl;
+package core.discuss.api.controller.impl;
 
 
 import com.discuss.core.service.DiscussService;
@@ -8,8 +8,9 @@ import com.discuss.datatypes.Question;
 import com.discuss.datatypes.Response;
 import com.discuss.datatypes.error.ErrorCode;
 import com.discuss.datatypes.request.CommentAdditionRequest;
+import com.discuss.datatypes.request.QuestionAdditionRequest;
 import com.google.common.collect.Lists;
-import core.discuss.service.controller.DiscussController;
+import core.discuss.api.controller.DiscussController;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -171,6 +172,20 @@ public class DiscussControllerImpl implements DiscussController {
         }
 
         return Response.successfulResponse(discussService.bookmarkQuestion(questionId, personId));
+    }
+
+    @Override
+    public Response<Question> addQuestion(QuestionAdditionRequest questionAdditionRequest) {
+        final List<ErrorCode> errorCodes = Lists.newArrayList();
+
+        errorCodes.addAll(RequestParamsValidator.validateCategory(questionAdditionRequest.getCategory()));
+        errorCodes.addAll(RequestParamsValidator.validatePersonID(questionAdditionRequest.getPersonID()));
+
+        if(CollectionUtils.isNotEmpty(errorCodes)) {
+            return Response.unSuccessfulResponse(errorCodes);
+        }
+
+        return Response.successfulResponse(discussService.addQuestion(questionAdditionRequest));
     }
 
     @Override

@@ -26,6 +26,10 @@
         </property>
     </bean>
 
+    <bean id="imageStore" class="com.discuss.core.dao.impl.ImageStoreImpl">
+        <constructor-arg value="${image-dir}"/>
+    </bean>
+
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://localhost:5432/discuss_db" />

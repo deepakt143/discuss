@@ -1,5 +1,6 @@
-package core.discuss.service.controller.impl;
+package core.discuss.api.controller.impl;
 
+import com.discuss.datatypes.Category;
 import com.discuss.datatypes.SortBy;
 import com.discuss.datatypes.SortOrder;
 import com.discuss.datatypes.error.ErrorCode;
@@ -84,5 +85,14 @@ public class RequestParamsValidator {
         errorCodes.addAll(validateOffset(offset));
         errorCodes.addAll(validateLimit(limit));
         return errorCodes;
+    }
+
+    static List<ErrorCode> validateCategory(final String category) {
+        Optional<Category> category1 = Category.findByName(category);
+
+        if (!category1.isPresent())
+            return ErrorCodeConstants.INVALID_CATEGORY_ERROR;
+
+        return EMPTY_LIST;
     }
 }

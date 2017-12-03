@@ -1,9 +1,6 @@
 package com.discuss.core.dao.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  *
@@ -12,9 +9,11 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "person")
+@SequenceGenerator(name = "person_id_seq_gen", sequenceName = "person_id_seq", allocationSize = 1)
 public class Person {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "person_id_seq_gen")
     @Column(name = "person_id")
     private int personId;
 

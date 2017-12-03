@@ -17,5 +17,6 @@ public class ErrorCodeConstants {
     public static final List<ErrorCode> INVALID_PERSON_ID_ERROR = ImmutableList.of(ErrorCode.INVALID_PERSON_ID);
     public static final List<ErrorCode> INVALID_QUESTION_ID_ERROR = ImmutableList.of(ErrorCode.INVALID_QUESTION_ID);
     public static final List<ErrorCode> INVALID_COMMENT_ID_ERROR = ImmutableList.of(ErrorCode.INVALID_COMMENT_ID);
+    public static final List<ErrorCode> INVALID_CATEGORY_ERROR = ImmutableList.of(ErrorCode.INVALID_CATEGORY);
 
 }

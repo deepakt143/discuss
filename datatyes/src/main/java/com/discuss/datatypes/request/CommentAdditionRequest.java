@@ -8,7 +8,6 @@ import java.io.Serializable;
  *
  * @author Deepak Thakur
  */
-
 @Data
 public class CommentAdditionRequest implements Serializable {
     private Integer questionId;

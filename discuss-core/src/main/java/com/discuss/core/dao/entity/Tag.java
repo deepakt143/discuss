@@ -1,9 +1,12 @@
 package com.discuss.core.dao.entity;
 
+import com.discuss.datatypes.Category;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Optional;
 
 /**
  *
@@ -98,5 +101,11 @@ public class Tag {
 
     public String toString() {
         return "com.discuss.core.dao.entity.Tag(tagId=" + this.tagId + ", name=" + this.name + ", description=" + this.description + ", popularity=" + this.popularity + ")";
+    }
+
+    public static Optional<Category> getCategoryForTag(Tag tag) {
+        if(null == tag)
+            return Optional.empty();
+        return Category.findByName(tag.getName());
     }
 }
